@@ -11,20 +11,20 @@
 
 int main(int argC, char* argV[])
 {
-	Window window(800, 800, "OpenGL", false, true);
-	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	Shader mainShader("src/shader/main.vert", "src/shader/main.frag");
-	Shader textShader("src/shader/text.vert", "src/shader/text.frag");
-	Shader lampShader("src/shader/lamp.vert", "src/shader/lamp.frag");
-	TextRenderer textRenderer("resources/font/consola.ttf", 0, 30);
+	Window window{ 800, 800, "OpenGL", false, true };
+	Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f) };
+	Shader mainShader{ "src/shader/main.vert", "src/shader/main.frag" };
+	Shader textShader{ "src/shader/text.vert", "src/shader/text.frag" };
+	Shader lampShader{ "src/shader/lamp.vert", "src/shader/lamp.frag" };
+	TextRenderer textRenderer{ "resources/font/consola.ttf", 0, 30 };
 	
 	window.addKeyCallback(camera.getKeyCallback());
 	window.addCursorPosCallback(camera.getCursorPosCallback());
 	window.addScrollCallback(camera.getScrollCallback());
 
-	Model backpack("resources\\objects\\backpack\\backpack.obj");
-	Model container("resources\\objects\\container\\container.obj");
-	Model lamp("resources\\objects\\lamp\\lamp.obj");
+	Model backpack{ "resources/objects/backpack/backpack.obj" };
+	Model container{ "resources/objects/container/container.obj" };
+	Model lamp{ "resources/objects/lamp/lamp.obj" };
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

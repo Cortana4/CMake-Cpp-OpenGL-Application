@@ -1,12 +1,12 @@
 {
-    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-    "builtin-baseline": "6f1ddd6b6878e7e66fcc35c65ba1d8feec2e01f8",
-    "dependencies": [
-        "glew",
-        "glfw3",
-        "glm",
-        "devil",
-        "freetype",
-        "assimp"
-    ]
+	"$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+	"builtin-baseline": "d5ec528843d29e3a52d745a64b469f810b2cedbf",
+	"dependencies": [
+		"glew",
+		"glfw3",
+		"glm",
+		"devil",
+		"freetype",
+		"assimp"
+	]
 }

@@ -1,12 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.8)
-
-## enable hot reload for MSVC compilers if supported.
-if(POLICY CMP0141)
-	cmake_policy(SET CMP0141 NEW)
-	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-		"$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>"
-	)
-endif()
+cmake_minimum_required(VERSION 3.22)
 
 project("OpenGL Template Project")
 
@@ -14,62 +6,23 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## target binary file
-set(TARGET_FILE
-	"Cpp-OpenGL-Application"
-)
+set(TARGET_FILE "Cpp-OpenGL-Application")
 
 ## header files
-set(INC_FILES
-	"include/camera.h"
-	"include/image.h"
-	"include/mesh.h"
-	"include/model.h"
-	"include/shader.h"
-	"include/textRenderer.h"
-	"include/texture.h"
-	"include/window.h"
-)
+file(GLOB_RECURSE INC_FILES "include/*.h")
 
 ## source files
-set(SRC_FILES
-	"src/camera.cpp"
-	"src/image.cpp"
-	"src/main.cpp"
-	"src/mesh.cpp"
-	"src/model.cpp"
-	"src/shader.cpp"
-	"src/textRenderer.cpp"
-	"src/texture.cpp"
-	"src/window.cpp"
-)
+file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
-## shader files
-set(SHADER_FILES
-	"src/shader/lamp.frag"
-	"src/shader/lamp.vert"
-	"src/shader/main.frag"
-	"src/shader/main.vert"
-	"src/shader/text.frag"
-	"src/shader/text.vert"
-)
+## set build directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${RUNTIME_SUBDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${LIBRARY_SUBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ARCHIVE_SUBDIR}")
 
-## resource files
-set(RESOURCE_FILES
-	"resources/font/consola.ttf"
-	"resources/texture/piston.png"
-	"resources/objects/backpack/ao.jpg"
-	"resources/objects/backpack/backpack.mtl"
-	"resources/objects/backpack/backpack.obj"
-	"resources/objects/backpack/diffuse.jpg"
-	"resources/objects/backpack/normal.png"
-	"resources/objects/backpack/roughness.jpg"
-	"resources/objects/backpack/specular.jpg"
-	"resources/objects/container/container.mtl"
-	"resources/objects/container/container.obj"
-	"resources/objects/container/container.png"
-	"resources/objects/lamp/lamp.mtl"
-	"resources/objects/lamp/lamp.obj"
-)
+## set install directories
+set(RUNTIME_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${RUNTIME_SUBDIR}")
+set(LIBRARY_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${LIBRARY_SUBDIR}")
+set(ARCHIVE_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${ARCHIVE_SUBDIR}")
 
 ## add source and header files to this project's executable
 add_executable(${TARGET_FILE} ${SRC_FILES} ${INC_FILES})
@@ -88,80 +41,146 @@ target_link_libraries(${TARGET_FILE} PRIVATE glfw)
 
 # glm
 find_package(glm CONFIG REQUIRED)
+target_link_libraries(${TARGET_FILE} PRIVATE glm::glm)
+
+# freetype
+find_package(freetype CONFIG REQUIRED)
+target_link_libraries(${TARGET_FILE} PRIVATE freetype)
+
+# assimp
+find_package(assimp CONFIG REQUIRED)
+target_link_libraries(${TARGET_FILE} PRIVATE assimp::assimp)
 
 # devil
-if(WIN32)
-	find_package(DevIL REQUIRED)
-	target_link_libraries(${TARGET_FILE} PRIVATE DevIL::IL)
-	target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILU)
-	target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILUT)
-else()
-	find_package(PkgConfig REQUIRED)
-	
-	pkg_check_modules(IL REQUIRED IMPORTED_TARGET IL)
-	target_link_libraries(${TARGET_FILE} PRIVATE PkgConfig::IL)
-	
-	pkg_check_modules(ILU REQUIRED IMPORTED_TARGET ILU)
-	target_link_libraries(${TARGET_FILE} PRIVATE PkgConfig::ILU)
-	
-	pkg_check_modules(ILUT REQUIRED IMPORTED_TARGET ILUT)
-	target_link_libraries(${TARGET_FILE} PRIVATE PkgConfig::ILUT)
-	
-	pkg_check_modules(jasper REQUIRED IMPORTED_TARGET jasper)
-	target_link_libraries(${TARGET_FILE} PRIVATE PkgConfig::jasper)
-	
-	#find_package(libjpeg-turbo CONFIG REQUIRED)
-	#target_link_libraries(${TARGET_FILE} PRIVATE libjpeg-turbo::turbojpeg-static)
+find_package(DevIL REQUIRED)
+target_link_libraries(${TARGET_FILE} PRIVATE DevIL::IL)
+target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILU)
+target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILUT)
 
-	pkg_check_modules(libtiff-4 REQUIRED IMPORTED_TARGET libtiff-4)
-	target_link_libraries(${TARGET_FILE} PRIVATE PkgConfig::libtiff-4)
+# for some reason, these devil dependencies are not linked automatically
+# when building as static library
+if(NOT BUILD_SHARED_LIBS)
+	add_compile_definitions(IL_STATIC_LIB)
+
+	find_package(Jasper REQUIRED)
+	target_link_libraries(${TARGET_FILE} PRIVATE Jasper::Jasper)
+
+	find_package(libjpeg-turbo CONFIG REQUIRED)
+	target_link_libraries(${TARGET_FILE} PRIVATE libjpeg-turbo::turbojpeg-static)
+
+	find_package(TIFF REQUIRED)
+	target_link_libraries(${TARGET_FILE} PRIVATE TIFF::TIFF)
 endif()
 
 # freetype
 find_package(freetype CONFIG REQUIRED)
 target_link_libraries(${TARGET_FILE} PRIVATE freetype)
 
-find_package(assimp CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE assimp::assimp)
 
-## do not open console window
-#set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE ON)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	## on windows, open the console window only for debug builds
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE OFF)
+	else()
+		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE ON)
+	endif()
 
-## copy shader files to build directory
-add_custom_target(copy_shaders ALL DEPENDS ${SHADER_FILES})
-add_dependencies(${TARGET_FILE} copy_shaders)
-foreach(SHADER_FILE ${SHADER_FILES})
-	add_custom_command(
-		TARGET copy_shaders
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_FILE}
-		${CMAKE_CURRENT_BINARY_DIR}/${SHADER_FILE}
-	)
-endforeach()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	if(BUILD_SHARED_LIBS)
+		## On Windows, vcpkg automatically copies dependent shared library files
+		## to the build and install directory. Unfortunately, this functionality
+		## is not available on linux. Instead, vcpkg sets RPATH/RUNPATH, so that
+		## dependent .so files are found at runtime. But the paths set by vcpkg
+		## are absolute, which means they are only correct for the build directory.
+		## In order to have a self contained install directory, we have to find
+		## and install all dependent .so files manually.
 
-## copy resource files to build directory
-#add_custom_target(copy_resources ALL DEPENDS ${RESOURCE_FILES})
-#add_dependencies(${TARGET_FILE} copy_resources)
-#foreach(RESOURCE_FILE ${RESOURCE_FILES})
-#	add_custom_command(
-#		TARGET copy_resources
-#		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#		${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_FILE}
-#		${CMAKE_CURRENT_BINARY_DIR}/${RESOURCE_FILE}
-#	)
-#endforeach()
-add_custom_target(copy_resources ALL
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-	${CMAKE_CURRENT_SOURCE_DIR}/resources
-	${CMAKE_CURRENT_BINARY_DIR}/resources
-)
-add_dependencies(${TARGET_FILE} copy_resources)
+		## only CMAKE_INSTALL_PREFIX is available in the generated install script, so
+		## we have to pass all other variables we want to use manually
+		install(CODE "set(TARGET_FILE \"${RUNTIME_SUBDIR}/${TARGET_FILE}\")")
+		install(CODE "set(LIBRARY_INSTALL_DIRECTORY \"${LIBRARY_INSTALL_DIRECTORY}\")")
+		install(CODE "set(INSTALL_SYSTEM_LIBRARIES \"${INSTALL_SYSTEM_LIBRARIES}\")")
+		install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
 
-## copy dynamic library, shader and resource files from build to install directory
-install(TARGETS ${TARGET_FILE} DESTINATION ${CMAKE_INSTALL_PREFIX})
-if(NOT "${SHADER_FILES}" STREQUAL "")
-	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src DESTINATION ${CMAKE_INSTALL_PREFIX})
+		## this adds code to the install script, that recursively gets dependencies and
+		## dependencies of dependencies and installs them to LIBRARY_INSTALL_DIRECTORY
+		install(CODE [[
+			cmake_policy(VERSION 3.22)
+
+			function(install_dependencies LIBRARY)
+				## skip already installed libraries
+				get_property(INSTALLED_LIBS GLOBAL PROPERTY INSTALLED_LIBRARIES)
+				if(LIBRARY IN_LIST INSTALLED_LIBS)
+					return()
+				endif()
+
+				## skip system libraries if enabled
+				string(FIND "${LIBRARY}" "${CMAKE_BINARY_DIR}" POSITION)
+				if(NOT INSTALL_SYSTEM_LIBRARIES AND POSITION EQUAL -1)
+					return()
+				endif()
+
+				## install library
+				file(INSTALL
+					DESTINATION "${LIBRARY_INSTALL_DIRECTORY}"
+					TYPE SHARED_LIBRARY
+					FOLLOW_SYMLINK_CHAIN
+					FILES "${LIBRARY}"
+				)
+
+				## mark library as installed
+				set_property(GLOBAL APPEND PROPERTY INSTALLED_LIBRARIES "${LIBRARY}")
+
+				## get dependencies of this library
+				file(GET_RUNTIME_DEPENDENCIES
+					LIBRARIES ${LIBRARY}
+					RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
+					UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
+				)
+
+				## recursively install dependencies
+				foreach(FILE ${RESOLVED_DEPS})
+					if(NOT IS_SYMLINK ${FILE})
+						install_dependencies(${FILE})
+					endif()
+				endforeach()
+
+				## report unresolved dependencies
+				foreach(FILE ${UNRESOLVED_DEPS})
+					message(STATUS "Unresolved from ${LIBRARY}: ${FILE}")
+				endforeach()
+			endfunction()
+
+			## initialize a global list to store installed libraries
+			set_property(GLOBAL PROPERTY INSTALLED_LIBRARIES "")
+
+			## get runtime dependencies of the main executable
+			file(GET_RUNTIME_DEPENDENCIES
+				EXECUTABLES ${TARGET_FILE}
+				RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
+				UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
+			)
+
+			## install all resolved dependencies
+			foreach(FILE ${RESOLVED_DEPS})
+				install_dependencies(${FILE})
+			endforeach()
+
+			## report unresolved dependencies
+			foreach(FILE ${UNRESOLVED_DEPS})
+				message(STATUS "Unresolved: ${FILE}")
+			endforeach()
+		]])
+	endif()
 endif()
-if(NOT "${RESOURCE_FILES}" STREQUAL "")
-	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/resources DESTINATION ${CMAKE_INSTALL_PREFIX})
-endif()
+
+## install exetutable, shared and static libraries
+install(TARGETS ${TARGET_FILE} RUNTIME DESTINATION ${RUNTIME_INSTALL_DIRECTORY})
+install(TARGETS ${TARGET_FILE} LIBRARY DESTINATION ${LIBRARY_INSTALL_DIRECTORY})
+install(TARGETS ${TARGET_FILE} ARCHIVE DESTINATION ${ARCHIVE_INSTALL_DIRECTORY})
+
+## install shader folder
+install(DIRECTORY src/shader DESTINATION ${RUNTIME_INSTALL_DIRECTORY}/src)
+
+## install resources folder
+install(DIRECTORY resources DESTINATION ${RUNTIME_INSTALL_DIRECTORY})
