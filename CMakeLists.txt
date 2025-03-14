@@ -78,100 +78,108 @@ target_link_libraries(${TARGET_FILE} PRIVATE freetype)
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	## on windows, open the console window only for debug builds
-	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE OFF)
-	else()
+	## on windows, don't open the console window for release builds
+	if(CMAKE_BUILD_TYPE STREQUAL "Release")
 		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE ON)
 	endif()
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	if(BUILD_SHARED_LIBS)
-		## On Windows, vcpkg automatically copies dependent shared library files
-		## to the build and install directory. Unfortunately, this functionality
-		## is not available on linux. Instead, vcpkg sets RPATH/RUNPATH, so that
-		## dependent .so files are found at runtime. But the paths set by vcpkg
-		## are absolute, which means they are only correct for the build directory.
-		## In order to have a self contained install directory, we have to find
-		## and install all dependent .so files manually.
+	## On Windows, vcpkg automatically copies dependent shared library files
+	## to the build and install directory. Unfortunately, this functionality
+	## is not available on linux. Instead, vcpkg sets RPATH/RUNPATH, so that
+	## dependent .so files are found at runtime. But the paths set by vcpkg
+	## are absolute, which means they are only correct for the build directory.
+	## In order to have a self contained install directory, we have to find
+	## and install all dependent .so files manually.
+
+	function(add_install_dependencies BINARY OUTPUT_DIRECTORY INCLUDE_SYSTEM_LIBRARIES)
+		if(NOT BUILD_SHARED_LIBS)
+			return()
+		endif()
 
 		## only CMAKE_INSTALL_PREFIX is available in the generated install script, so
 		## we have to pass all other variables we want to use manually
-		install(CODE "set(TARGET_FILE \"${RUNTIME_SUBDIR}/${TARGET_FILE}\")")
-		install(CODE "set(LIBRARY_INSTALL_DIRECTORY \"${LIBRARY_INSTALL_DIRECTORY}\")")
-		install(CODE "set(INSTALL_SYSTEM_LIBRARIES \"${INSTALL_SYSTEM_LIBRARIES}\")")
+		install(CODE "set(BINARY \"${BINARY}\")")
+		install(CODE "set(OUTPUT_DIRECTORY \"${OUTPUT_DIRECTORY}\")")
+		install(CODE "set(INCLUDE_SYSTEM_LIBRARIES \"${INCLUDE_SYSTEM_LIBRARIES}\")")
 		install(CODE "set(CMAKE_BINARY_DIR \"${CMAKE_BINARY_DIR}\")")
 
 		## this adds code to the install script, that recursively gets dependencies and
-		## dependencies of dependencies and installs them to LIBRARY_INSTALL_DIRECTORY
+		## dependencies of dependencies and installs them to OUTPUT_DIRECTORY
 		install(CODE [[
 			cmake_policy(VERSION 3.22)
 
 			function(install_dependencies LIBRARY)
-				## skip already installed libraries
+				## Skip already installed libraries
 				get_property(INSTALLED_LIBS GLOBAL PROPERTY INSTALLED_LIBRARIES)
 				if(LIBRARY IN_LIST INSTALLED_LIBS)
 					return()
 				endif()
 
-				## skip system libraries if enabled
+				## Skip system libraries if disabled
 				string(FIND "${LIBRARY}" "${CMAKE_BINARY_DIR}" POSITION)
-				if(NOT INSTALL_SYSTEM_LIBRARIES AND POSITION EQUAL -1)
+				if(NOT INCLUDE_SYSTEM_LIBRARIES AND POSITION EQUAL -1)
 					return()
 				endif()
 
-				## install library
+				## Install library
 				file(INSTALL
-					DESTINATION "${LIBRARY_INSTALL_DIRECTORY}"
+					DESTINATION "${OUTPUT_DIRECTORY}"
 					TYPE SHARED_LIBRARY
 					FOLLOW_SYMLINK_CHAIN
 					FILES "${LIBRARY}"
 				)
 
-				## mark library as installed
+				## Mark library as installed
 				set_property(GLOBAL APPEND PROPERTY INSTALLED_LIBRARIES "${LIBRARY}")
 
-				## get dependencies of this library
+				## Get dependencies of this library
 				file(GET_RUNTIME_DEPENDENCIES
 					LIBRARIES ${LIBRARY}
 					RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
 					UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
 				)
 
-				## recursively install dependencies
+				## Recursively install dependencies
 				foreach(FILE ${RESOLVED_DEPS})
 					if(NOT IS_SYMLINK ${FILE})
 						install_dependencies(${FILE})
 					endif()
 				endforeach()
 
-				## report unresolved dependencies
+				## Report unresolved dependencies
 				foreach(FILE ${UNRESOLVED_DEPS})
 					message(STATUS "Unresolved from ${LIBRARY}: ${FILE}")
 				endforeach()
 			endfunction()
 
-			## initialize a global list to store installed libraries
+			## Initialize a global list to store installed libraries
 			set_property(GLOBAL PROPERTY INSTALLED_LIBRARIES "")
 
-			## get runtime dependencies of the main executable
+			## Get runtime dependencies of the main executable
 			file(GET_RUNTIME_DEPENDENCIES
-				EXECUTABLES ${TARGET_FILE}
+				EXECUTABLES ${BINARY}
 				RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
 				UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
 			)
 
-			## install all resolved dependencies
+			## Install all resolved dependencies
 			foreach(FILE ${RESOLVED_DEPS})
 				install_dependencies(${FILE})
 			endforeach()
 
-			## report unresolved dependencies
+			## Report unresolved dependencies
 			foreach(FILE ${UNRESOLVED_DEPS})
 				message(STATUS "Unresolved: ${FILE}")
 			endforeach()
 		]])
-	endif()
+	endfunction()
+
+	add_install_dependencies(
+		${RUNTIME_SUBDIR}/${TARGET_FILE}
+		${LIBRARY_INSTALL_DIRECTORY}
+		${INSTALL_SYSTEM_LIBRARIES}
+	)
 endif()
 
 ## install exetutable, shared and static libraries
