@@ -16,38 +16,70 @@ jobs:
       matrix:
         include:
           # windows
-          - os: windows-latest
-            preset: windows-x64-debug
-            path: x64/Debug
+          #- os: windows-latest
+          #  preset: windows-dynamic-x64-debug
+          #  path: dynamic-x64-debug
 
           - os: windows-latest
-            preset: windows-x64-release
-            path: x64/Release
+            preset: windows-dynamic-x64-release
+            path: dynamic-x64-release
 
           #- os: windows-latest
-          #  preset: windows-x86-debug
-          #  path: x86/Debug
+          #  preset: windows-dynamic-x86-debug
+          #  path: dynamic-x86-debug
 
           #- os: windows-latest
-          #  preset: windows-x86-release
-          #  path: x86/Release
+          #  preset: windows-dynamic-x86-release
+          #  path: dynamic-x86-release
+
+          #- os: windows-latest
+          #  preset: windows-static-x64-debug
+          #  path: static-x64-debug
+
+          #- os: windows-latest
+          #  preset: windows-static-x64-release
+          #  path: static-x64-release
+
+          #- os: windows-latest
+          #  preset: windows-static-x86-debug
+          #  path: static-x86-debug
+
+          #- os: windows-latest
+          #  preset: windows-static-x86-release
+          #  path: static-x86-release
 
           # linux
-          - os: ubuntu-latest
-            preset: linux-x64-debug
-            path: x64/Debug
-
-          - os: ubuntu-latest
-            preset: linux-x64-release
-            path: x64/Release
+          #- os: ubuntu-latest
+          #  preset: linux-dynamic-x64-debug
+          #  path: dynamic-x64-debug
 
           #- os: ubuntu-latest
-          #  preset: linux-x86-debug
-          #  path: x86/Debug
+          #  preset: linux-dynamic-x64-release
+          #  path: dynamic-x64-release
 
           #- os: ubuntu-latest
-          #  preset: linux-x86-release
-          #  path: x86/Release
+          #  preset: linux-dynamic-x86-debug
+          #  path: dynamic-x86-debug
+
+          #- os: ubuntu-latest
+          #  preset: linux-dynamic-x86-release
+          #  path: dynamic-x86-release
+
+          #- os: ubuntu-latest
+          #  preset: linux-static-x64-debug
+          #  path: static-x64-debug
+
+          - os: ubuntu-latest
+            preset: linux-static-x64-release
+            path: static-x64-release
+
+          #- os: ubuntu-latest
+          #  preset: linux-static-x86-debug
+          #  path: static-x86-debug
+
+          #- os: ubuntu-latest
+          #  preset: linux-static-x86-release
+          #  path: static-x86-release
 
     steps:
     - name: Checkout Code
@@ -117,7 +149,7 @@ jobs:
         cmake --build --preset ${{ matrix.preset }} --target install
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.preset }}
-        path: bin/${{ matrix.path }}
+        path: install/${{ matrix.path }}
