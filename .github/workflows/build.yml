@@ -102,6 +102,12 @@ jobs:
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
         sudo apt-get install -y \
         ninja-build \
+        opengl \
+        glu \
+        libx11 \
+        xrandr \
+        xi \
+        xxf86vm \
         libxi-dev \
         libxtst-dev \
         '^libxcb.*-dev' \
