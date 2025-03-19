@@ -102,18 +102,24 @@ jobs:
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
         sudo apt-get install -y \
         ninja-build \
+        pkg-config \
         mesa-common-dev \
+        xorg-dev \
+        '^libxcb.*-dev' \
+        libxmu-dev \
         libxi-dev \
         libxtst-dev \
-        '^libxcb.*-dev' \
         libx11-xcb-dev \
+        libgl-dev \
         libgl1-mesa-dev \
         libglu1-mesa-dev \
         libxrender-dev \
         libxkbcommon-dev \
         libxkbcommon-x11-dev \
         libxrandr-dev \
-        libxxf86vm-dev
+        libxxf86vm-dev \
+        libxinerama-dev \
+        libxcursor-dev
 
     - name: Install CMake
       uses: jwlawson/actions-setup-cmake@v2
