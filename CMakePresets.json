@@ -89,20 +89,6 @@
 			}
 		},
 		{
-			"name": "static",
-			"hidden": true,
-			"cacheVariables": {
-				"LIBRARY_TYPE": "STATIC"
-			}
-		},
-		{
-			"name": "dynamic",
-			"hidden": true,
-			"cacheVariables": {
-				"LIBRARY_TYPE": "SHARED"
-			}
-		},
-		{
 			"name": "debug",
 			"hidden": true,
 			"cacheVariables": {
@@ -114,6 +100,38 @@
 			"hidden": true,
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release"
+			}
+		},
+		{
+			"name": "target-windows-x64",
+			"hidden": true,
+			"architecture": {
+				"value": "x64",
+				"strategy": "external"
+			}
+		},
+		{
+			"name": "target-windows-x86",
+			"hidden": true,
+			"architecture": {
+				"value": "x86",
+				"strategy": "external"
+			}
+		},
+		{
+			"name": "target-linux-x64",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_C_FLAGS": "-m64",
+				"CMAKE_CXX_FLAGS": "-m64"
+			}
+		},
+		{
+			"name": "target-linux-x86",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_C_FLAGS": "-m32",
+				"CMAKE_CXX_FLAGS": "-m32"
 			}
 		},
 		{
@@ -211,112 +229,112 @@
 		{
 			"name": "windows-dynamic-x64-debug",
 			"displayName": "dynamic-x64-debug",
-			"inherits": [ "windows", "debug", "triplet-windows-dynamic-x64", "runtime-windows-dynamic-debug" ],
+			"inherits": [ "windows", "debug", "target-windows-x64", "triplet-windows-dynamic-x64", "runtime-windows-dynamic-debug" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x64-debug",
 			"installDir": "${sourceDir}/install/dynamic-x64-debug"
 		},
 		{
 			"name": "windows-dynamic-x64-release",
 			"displayName": "dynamic-x64-release",
-			"inherits": [ "windows", "release", "triplet-windows-dynamic-x64", "runtime-windows-dynamic-release" ],
+			"inherits": [ "windows", "release", "target-windows-x64", "triplet-windows-dynamic-x64", "runtime-windows-dynamic-release" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x64-release",
 			"installDir": "${sourceDir}/install/dynamic-x64-release"
 		},
 		{
 			"name": "windows-dynamic-x86-debug",
 			"displayName": "dynamic-x86-debug",
-			"inherits": [ "windows", "debug", "triplet-windows-dynamic-x86", "runtime-windows-dynamic-debug" ],
+			"inherits": [ "windows", "debug", "target-windows-x86", "triplet-windows-dynamic-x86", "runtime-windows-dynamic-debug" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x86-debug",
 			"installDir": "${sourceDir}/install/dynamic-x86-debug"
 		},
 		{
 			"name": "windows-dynamic-x86-release",
 			"displayName": "dynamic-x86-release",
-			"inherits": [ "windows", "release", "triplet-windows-dynamic-x86", "runtime-windows-dynamic-release" ],
+			"inherits": [ "windows", "release", "target-windows-x86", "triplet-windows-dynamic-x86", "runtime-windows-dynamic-release" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x86-release",
 			"installDir": "${sourceDir}/install/dynamic-x86-release"
 		},
 		{
 			"name": "windows-static-x64-debug",
 			"displayName": "static-x64-debug",
-			"inherits": [ "windows", "debug", "triplet-windows-static-x64", "runtime-windows-static-debug" ],
+			"inherits": [ "windows", "debug", "target-windows-x64", "triplet-windows-static-x64", "runtime-windows-static-debug" ],
 			"binaryDir": "${sourceDir}/build/static-x64-debug",
 			"installDir": "${sourceDir}/install/static-x64-debug"
 		},
 		{
 			"name": "windows-static-x64-release",
 			"displayName": "static-x64-release",
-			"inherits": [ "windows", "release", "triplet-windows-static-x64", "runtime-windows-static-release" ],
+			"inherits": [ "windows", "release", "target-windows-x64", "triplet-windows-static-x64", "runtime-windows-static-release" ],
 			"binaryDir": "${sourceDir}/build/static-x64-release",
 			"installDir": "${sourceDir}/install/static-x64-release"
 		},
 		{
 			"name": "windows-static-x86-debug",
 			"displayName": "static-x86-debug",
-			"inherits": [ "windows", "debug", "triplet-windows-static-x86", "runtime-windows-static-debug" ],
+			"inherits": [ "windows", "debug", "target-windows-x86", "triplet-windows-static-x86", "runtime-windows-static-debug" ],
 			"binaryDir": "${sourceDir}/build/static-x86-debug",
 			"installDir": "${sourceDir}/install/static-x86-debug"
 		},
 		{
 			"name": "windows-static-x86-release",
 			"displayName": "static-x86-release",
-			"inherits": [ "windows", "release", "triplet-windows-static-x86", "runtime-windows-static-release" ],
+			"inherits": [ "windows", "release", "target-windows-x86", "triplet-windows-static-x86", "runtime-windows-static-release" ],
 			"binaryDir": "${sourceDir}/build/static-x86-release",
 			"installDir": "${sourceDir}/install/static-x86-release"
 		},
 		{
 			"name": "linux-dynamic-x64-debug",
 			"displayName": "dynamic-x64-debug",
-			"inherits": [ "linux", "debug", "triplet-linux-dynamic-x64" ],
+			"inherits": [ "linux", "debug", "target-linux-x64", "triplet-linux-dynamic-x64" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x64-debug",
 			"installDir": "${sourceDir}/install/dynamic-x64-debug"
 		},
 		{
 			"name": "linux-dynamic-x64-release",
 			"displayName": "dynamic-x64-release",
-			"inherits": [ "linux", "release", "triplet-linux-dynamic-x64" ],
+			"inherits": [ "linux", "release", "target-linux-x64", "triplet-linux-dynamic-x64" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x64-release",
 			"installDir": "${sourceDir}/install/dynamic-x64-release"
 		},
 		{
 			"name": "linux-dynamic-x86-debug",
 			"displayName": "dynamic-x86-debug",
-			"inherits": [ "linux", "debug", "triplet-linux-dynamic-x86" ],
+			"inherits": [ "linux", "debug", "target-linux-x86", "triplet-linux-dynamic-x86" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x86-debug",
 			"installDir": "${sourceDir}/install/dynamic-x86-debug"
 		},
 		{
 			"name": "linux-dynamic-x86-release",
 			"displayName": "dynamic-x86-release",
-			"inherits": [ "linux", "release", "triplet-linux-dynamic-x86" ],
+			"inherits": [ "linux", "release", "target-linux-x86", "triplet-linux-dynamic-x86" ],
 			"binaryDir": "${sourceDir}/build/dynamic-x86-release",
 			"installDir": "${sourceDir}/install/dynamic-x86-release"
 		},
 		{
 			"name": "linux-static-x64-debug",
 			"displayName": "static-x64-debug",
-			"inherits": [ "linux", "debug", "triplet-linux-static-x64" ],
+			"inherits": [ "linux", "debug", "target-linux-x64", "triplet-linux-static-x64" ],
 			"binaryDir": "${sourceDir}/build/static-x64-debug",
 			"installDir": "${sourceDir}/install/static-x64-debug"
 		},
 		{
 			"name": "linux-static-x64-release",
 			"displayName": "static-x64-release",
-			"inherits": [ "linux", "release", "triplet-linux-static-x64" ],
+			"inherits": [ "linux", "release", "target-linux-x64", "triplet-linux-static-x64" ],
 			"binaryDir": "${sourceDir}/build/static-x64-release",
 			"installDir": "${sourceDir}/install/static-x64-release"
 		},
 		{
 			"name": "linux-static-x86-debug",
 			"displayName": "static-x86-debug",
-			"inherits": [ "linux", "debug", "triplet-linux-static-x86" ],
+			"inherits": [ "linux", "debug", "target-linux-x86", "triplet-linux-static-x86" ],
 			"binaryDir": "${sourceDir}/build/static-x86-debug",
 			"installDir": "${sourceDir}/install/static-x86-debug"
 		},
 		{
 			"name": "linux-static-x86-release",
 			"displayName": "static-x86-release",
-			"inherits": [ "linux", "release", "triplet-linux-static-x86" ],
+			"inherits": [ "linux", "release", "target-linux-x86", "triplet-linux-static-x86" ],
 			"binaryDir": "${sourceDir}/build/static-x86-release",
 			"installDir": "${sourceDir}/install/static-x86-release"
 		}
