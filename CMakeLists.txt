@@ -78,12 +78,13 @@ target_link_libraries(${TARGET_FILE} PRIVATE freetype)
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	## On windows, don't open the console window for release builds. When using
-	## WIN32_EXECUTABLE ON, the linker expects a WinMain entry point, so we have
-	## to set /ENTRY manually to use the default main entry point instead.
+	## on windows, don't open the console window for release builds
 	if(CMAKE_BUILD_TYPE STREQUAL "Release")
 		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE ON)
-		set_target_properties(${TARGET_FILE} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
+
+		## when using WIN32_EXECUTABLE ON, the linker expects a WinMain entry point, so
+		## we have to set /ENTRY manually to use the default main entry point instead
+		target_link_options(${TARGET_FILE} PRIVATE "/ENTRY:mainCRTStartup")
 	endif()
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
