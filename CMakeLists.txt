@@ -72,10 +72,6 @@ if(NOT BUILD_SHARED_LIBS)
 	target_link_libraries(${TARGET_FILE} PRIVATE TIFF::TIFF)
 endif()
 
-# freetype
-find_package(freetype CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE freetype)
-
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	## on windows, don't open the console window for release builds
