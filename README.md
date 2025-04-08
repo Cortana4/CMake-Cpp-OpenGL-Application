@@ -58,7 +58,7 @@ section of the github action.
 - The path to your repository must not contain whitespaces or special chars.
 - use a CMake version between 3.27 and 3.31: in the latest version (4.0 and
   above) compatibility with older versions was dropped and some vcpkg packages
-  might depend on older features.+
+  might depend on older features.
 
 #### Windows specific
 
