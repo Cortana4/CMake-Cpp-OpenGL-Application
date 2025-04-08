@@ -9,9 +9,9 @@ binaries using static/dynamic linkage for Windows as well as Linux. All
 dependencies that are needed to run the executable are automatically copied to
 the install folder during the CMake install target. By having a self contained
 install folder, you get a portable executable, that can easily be shared and
-run accross systems. The project also includes a github workflow, that builds
-the application on a github runner and provides the binaries for download in
-the artifacts section of the github action.
+run across systems. The project also includes a github workflow, that builds
+the application on a github runner and uploads the binaries in the artifacts
+section of the github action.
 
 ## Getting Started
 
