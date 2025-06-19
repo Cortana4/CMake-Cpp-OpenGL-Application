@@ -25,37 +25,37 @@ set(LIBRARY_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${LIBRARY_SUBDIR}")
 set(ARCHIVE_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${ARCHIVE_SUBDIR}")
 
 ## add source and header files to this project's executable
-add_executable(${TARGET_FILE} ${SRC_FILES} ${INC_FILES})
+add_executable("${TARGET_FILE}" ${SRC_FILES} ${INC_FILES})
 
 ## add include directories
-target_include_directories(${TARGET_FILE} PRIVATE "include")
+target_include_directories("${TARGET_FILE}" PRIVATE "include")
 
 ## add libraries
 # glew
 find_package(GLEW CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE GLEW::GLEW)
+target_link_libraries("${TARGET_FILE}" PRIVATE GLEW::GLEW)
 
 # glfw3
 find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE glfw)
+target_link_libraries("${TARGET_FILE}" PRIVATE glfw)
 
 # glm
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE glm::glm)
+target_link_libraries("${TARGET_FILE}" PRIVATE glm::glm)
 
 # freetype
 find_package(freetype CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE freetype)
+target_link_libraries("${TARGET_FILE}" PRIVATE freetype)
 
 # assimp
 find_package(assimp CONFIG REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE assimp::assimp)
+target_link_libraries("${TARGET_FILE}" PRIVATE assimp::assimp)
 
 # devil
 find_package(DevIL REQUIRED)
-target_link_libraries(${TARGET_FILE} PRIVATE DevIL::IL)
-target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILU)
-target_link_libraries(${TARGET_FILE} PRIVATE DevIL::ILUT)
+target_link_libraries("${TARGET_FILE}" PRIVATE DevIL::IL)
+target_link_libraries("${TARGET_FILE}" PRIVATE DevIL::ILU)
+target_link_libraries("${TARGET_FILE}" PRIVATE DevIL::ILUT)
 
 # for some reason, these devil dependencies are not linked automatically
 # when building as static library
@@ -63,24 +63,24 @@ if(NOT BUILD_SHARED_LIBS)
 	add_compile_definitions(IL_STATIC_LIB)
 
 	find_package(Jasper REQUIRED)
-	target_link_libraries(${TARGET_FILE} PRIVATE Jasper::Jasper)
+	target_link_libraries("${TARGET_FILE}" PRIVATE Jasper::Jasper)
 
 	find_package(libjpeg-turbo CONFIG REQUIRED)
-	target_link_libraries(${TARGET_FILE} PRIVATE libjpeg-turbo::turbojpeg-static)
+	target_link_libraries("${TARGET_FILE}" PRIVATE libjpeg-turbo::turbojpeg-static)
 
 	find_package(TIFF REQUIRED)
-	target_link_libraries(${TARGET_FILE} PRIVATE TIFF::TIFF)
+	target_link_libraries("${TARGET_FILE}" PRIVATE TIFF::TIFF)
 endif()
 
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	## on windows, don't open the console window for release builds
 	if(CMAKE_BUILD_TYPE STREQUAL "Release")
-		set_target_properties(${TARGET_FILE} PROPERTIES WIN32_EXECUTABLE ON)
+		set_target_properties("${TARGET_FILE}" PROPERTIES WIN32_EXECUTABLE ON)
 
 		## when using WIN32_EXECUTABLE ON, the linker expects a WinMain entry point, so
 		## we have to set /ENTRY manually to use the default main entry point instead
-		target_link_options(${TARGET_FILE} PRIVATE "/ENTRY:mainCRTStartup")
+		target_link_options("${TARGET_FILE}" PRIVATE "/ENTRY:mainCRTStartup")
 	endif()
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -142,8 +142,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 				## Recursively install dependencies
 				foreach(FILE ${RESOLVED_DEPS})
-					if(NOT IS_SYMLINK ${FILE})
-						install_dependencies(${FILE})
+					if(NOT IS_SYMLINK "${FILE}")
+						install_dependencies("${FILE}")
 					endif()
 				endforeach()
 
@@ -176,19 +176,19 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	endfunction()
 
 	add_install_dependencies(
-		${RUNTIME_SUBDIR}/${TARGET_FILE}
-		${LIBRARY_INSTALL_DIRECTORY}
-		${INSTALL_SYSTEM_LIBRARIES}
+		"${RUNTIME_SUBDIR}/${TARGET_FILE}"
+		"${LIBRARY_INSTALL_DIRECTORY}"
+		"${INSTALL_SYSTEM_LIBRARIES}"
 	)
 endif()
 
 ## install exetutable, shared and static libraries
-install(TARGETS ${TARGET_FILE} RUNTIME DESTINATION ${RUNTIME_INSTALL_DIRECTORY})
-install(TARGETS ${TARGET_FILE} LIBRARY DESTINATION ${LIBRARY_INSTALL_DIRECTORY})
-install(TARGETS ${TARGET_FILE} ARCHIVE DESTINATION ${ARCHIVE_INSTALL_DIRECTORY})
+install(TARGETS "${TARGET_FILE}" RUNTIME DESTINATION "${RUNTIME_INSTALL_DIRECTORY}")
+install(TARGETS "${TARGET_FILE}" LIBRARY DESTINATION "${LIBRARY_INSTALL_DIRECTORY}")
+install(TARGETS "${TARGET_FILE}" ARCHIVE DESTINATION "${ARCHIVE_INSTALL_DIRECTORY}")
 
 ## install shader folder
-install(DIRECTORY src/shader DESTINATION ${RUNTIME_INSTALL_DIRECTORY}/src)
+install(DIRECTORY "src/shader" DESTINATION "${RUNTIME_INSTALL_DIRECTORY}/src")
 
 ## install resources folder
-install(DIRECTORY resources DESTINATION ${RUNTIME_INSTALL_DIRECTORY})
+install(DIRECTORY "resources" DESTINATION "${RUNTIME_INSTALL_DIRECTORY}")
