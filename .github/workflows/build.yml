@@ -123,6 +123,8 @@ jobs:
 
     - name: Install CMake
       uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.31.x'
 
     # due to path length limitations on windows, vcpkg root and vcpkg_installed
     # paths must be as short as possible, otherwise the build of dependencies
