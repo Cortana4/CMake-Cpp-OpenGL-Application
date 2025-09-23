@@ -1,0 +1,94 @@
+cmake_minimum_required(VERSION 3.22)
+
+project("App Project")
+
+## target binary file
+set(TARGET_NAME "app")
+
+## header files
+file(GLOB_RECURSE INC_FILES "include/*.h")
+
+## source files
+file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+
+## add source and header files to this project's executable
+add_executable("${TARGET_NAME}" ${SRC_FILES} ${INC_FILES})
+
+## add include directories
+target_include_directories("${TARGET_NAME}" PRIVATE "include")
+
+## add libraries
+# glew
+find_package(GLEW CONFIG REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE GLEW::GLEW)
+
+# glfw3
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE glfw)
+
+# glm
+find_package(glm CONFIG REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE glm::glm)
+
+# freetype
+find_package(freetype CONFIG REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE freetype)
+
+# assimp
+find_package(assimp CONFIG REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE assimp::assimp)
+
+# devil
+find_package(DevIL REQUIRED)
+target_link_libraries("${TARGET_NAME}" PRIVATE DevIL::IL)
+target_link_libraries("${TARGET_NAME}" PRIVATE DevIL::ILU)
+target_link_libraries("${TARGET_NAME}" PRIVATE DevIL::ILUT)
+
+# for some reason, these devil dependencies are not linked automatically
+# when building as static library
+if(NOT BUILD_SHARED_LIBS)
+	add_compile_definitions(IL_STATIC_LIB)
+
+	find_package(Jasper REQUIRED)
+	target_link_libraries("${TARGET_NAME}" PRIVATE Jasper::Jasper)
+
+	find_package(libjpeg-turbo CONFIG REQUIRED)
+	target_link_libraries("${TARGET_NAME}" PRIVATE libjpeg-turbo::turbojpeg-static)
+
+	find_package(TIFF REQUIRED)
+	target_link_libraries("${TARGET_NAME}" PRIVATE TIFF::TIFF)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	## on windows, don't open the console window for release builds
+	if(CMAKE_BUILD_TYPE STREQUAL "Release")
+		set_target_properties("${TARGET_NAME}" PROPERTIES WIN32_EXECUTABLE ON)
+
+		## when using WIN32_EXECUTABLE ON, the linker expects a WinMain entry point, so
+		## we have to set /ENTRY manually to use the default main entry point instead
+		target_link_options("${TARGET_NAME}" PRIVATE "/ENTRY:mainCRTStartup")
+	endif()
+endif()
+
+## make assets available in the build directory via symlink
+util_add_post_build_create_symlink("${TARGET_NAME}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/shader"
+	"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/src/shader"
+)
+util_add_post_build_create_symlink("${TARGET_NAME}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/resources"
+	"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources"
+)
+
+## install exetutable, shared and static libraries
+install(TARGETS "${TARGET_NAME}" RUNTIME DESTINATION "${RUNTIME_INSTALL_DIRECTORY}")
+install(TARGETS "${TARGET_NAME}" LIBRARY DESTINATION "${LIBRARY_INSTALL_DIRECTORY}")
+install(TARGETS "${TARGET_NAME}" ARCHIVE DESTINATION "${ARCHIVE_INSTALL_DIRECTORY}")
+
+util_install_dependencies("${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}"
+	"${LIBRARY_INSTALL_DIRECTORY}" "${INSTALL_SYSTEM_LIBRARIES}"
+)
+
+## install assets
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/shader" DESTINATION "${RUNTIME_INSTALL_DIRECTORY}/src")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/resources" DESTINATION "${RUNTIME_INSTALL_DIRECTORY}")
