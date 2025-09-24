@@ -1,6 +1,6 @@
 ## Overview
 
-This is a CMake template project for building an OpenGL application using C++. All
+This is a CMake template project for building a Console application using C++. All
 necessary libraries are downloaded and build automatically using the vcpkg
 package manager. You only need an appropriate compiler (Visual Studio build
 tools on Windows, g++ on Linux), CMake, Ninja and of course vcpkg installed on
@@ -21,10 +21,16 @@ section of the github action.
 
   `git clone https://github.com/Cortana4/CMake-Cpp-Qt-Application.git`
 
-- Change the URL to your github repository and push your newly cloned repository:
+- Rename the cloned folder, cd into it and delete the .git folder.
 
-  `git remote set-url origin <URL>`<br>
-  `git push --force origin main`
+- Start fresh by initializing a new repository:
+
+  `git init`<br>
+  `git branch -M main`<br>
+  `git remote add origin <URL>`<br>
+  `git add --all`<br>
+  `git commit -m "initial commit"`<br>
+  `git push -u origin main`
 
 - Now you can list all available presets for yor machine by running the
   following command in the root of your repository:
