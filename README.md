@@ -1,6 +1,6 @@
 ## Overview
 
-This is a CMake template project for building a Console application using C++. All
+This is a CMake template project for building an OpenGL application using C++. All
 necessary libraries are downloaded and build automatically using the vcpkg
 package manager. You only need an appropriate compiler (Visual Studio build
 tools on Windows, g++ on Linux), CMake, Ninja and of course vcpkg installed on
