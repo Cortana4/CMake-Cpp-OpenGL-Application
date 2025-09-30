@@ -23,10 +23,12 @@
 				"CMAKE_C_COMPILER": "cl.exe",
 				"CMAKE_CXX_COMPILER": "cl.exe",
 				"CMAKE_MAKE_PROGRAM": "ninja.exe",
-				"X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
+				"X_VCPKG_APPLOCAL_DEPS_INSTALL": "OFF",
 				"RUNTIME_SUBDIR": "bin",
 				"LIBRARY_SUBDIR": "bin",
-				"ARCHIVE_SUBDIR": "lib"
+				"ARCHIVE_SUBDIR": "lib",
+				"GLOBAL_DEP_PRE_EXCLUDE_REGEXES": "^api-ms-.*\\.dll$;^ext-ms-.*\\.dll$",
+				"GLOBAL_DEP_POST_EXCLUDE_REGEXES": ".*[\\\\/]([Ww]indows|[Ss]ystem32)[\\\\/].*"
 			},
 			"environment": {
 
@@ -47,10 +49,11 @@
 				"CMAKE_CXX_COMPILER": "g++",
 				"CMAKE_MAKE_PROGRAM": "ninja",
 				"CMAKE_INSTALL_RPATH": "$ORIGIN/../lib",
-				"INSTALL_SYSTEM_LIBRARIES": "OFF",
 				"RUNTIME_SUBDIR": "bin",
 				"LIBRARY_SUBDIR": "lib",
-				"ARCHIVE_SUBDIR": "lib"
+				"ARCHIVE_SUBDIR": "lib",
+				"GLOBAL_DEP_PRE_EXCLUDE_REGEXES": "^libc\\.so(\\..*)*$;^libm\\.so(\\..*)*$;^libgcc_s\\.so(\\..*)*$;^libstdc\\+\\+\\.so(\\..*)*$;^ld-linux.*\\.so(\\..*)*$",
+				"GLOBAL_DEP_POST_EXCLUDE_REGEXES": "^/(lib|lib64|usr/lib|usr/lib64)/.*"
 			},
 			"environment": {
 

@@ -19,7 +19,7 @@ section of the github action.
   PATH and that the VCPKG_ROOT environment variable is set. Then clone the
   repository:
 
-  `git clone https://github.com/Cortana4/CMake-Cpp-Qt-Application.git`
+  `git clone https://github.com/Cortana4/CMake-Cpp-OpenGL-Application.git`
 
 - Rename the cloned folder, cd into it and delete the .git folder.
 
