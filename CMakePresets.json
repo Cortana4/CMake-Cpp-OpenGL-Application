@@ -124,17 +124,17 @@
 		{
 			"name": "target-linux-x64",
 			"hidden": true,
-			"cacheVariables": {
-				"CMAKE_C_FLAGS": "-m64",
-				"CMAKE_CXX_FLAGS": "-m64"
+			"environment": {
+				"CFLAGS": "-m64",
+				"CXXFLAGS": "-m64"
 			}
 		},
 		{
 			"name": "target-linux-x86",
 			"hidden": true,
-			"cacheVariables": {
-				"CMAKE_C_FLAGS": "-m32",
-				"CMAKE_CXX_FLAGS": "-m32"
+			"environment": {
+				"CFLAGS": "-m32",
+				"CXXFLAGS": "-m32"
 			}
 		},
 		{
