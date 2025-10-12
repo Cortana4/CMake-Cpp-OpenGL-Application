@@ -49,9 +49,9 @@ jobs:
           #  path: static-x86-release
 
           # linux
-          #- os: ubuntu-latest
-          #  preset: linux-dynamic-x64-debug
-          #  path: dynamic-x64-debug
+          - os: ubuntu-latest
+            preset: linux-dynamic-x64-debug
+            path: dynamic-x64-debug
 
           #- os: ubuntu-latest
           #  preset: linux-dynamic-x64-release
